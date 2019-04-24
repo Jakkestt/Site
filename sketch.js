@@ -9,11 +9,13 @@ var bounceFactor = 0.2;
 var radius = 10;
 var locked;
 
+balls = [];
+
 function setup() {
     width = 640;
     height = 480;
     createCanvas(width,height);
-    frameRate(30);
+    frameRate(60);
     x = width/2;
     y = height/2;
 }
@@ -24,7 +26,13 @@ function draw() {
     fuck();
     fill(255);
     move();
-    ellipse(x,y,radius*2,radius*2);
+    ball();
+}
+
+function addBall() {
+    balls.push ({
+        ellipse(x,y,radius*2,radius*2)
+    })
 }
 
 function move() {
