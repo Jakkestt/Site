@@ -69,11 +69,11 @@ function move(ball) {
 }
 
 function fuck(ball) {
-    var dist = Math.sqrt((mouseX - ball.x) * (mouseX - ball.x) + (mouseY - ball.y) * (mouseY - ball.y));
+    const dist = Math.sqrt((mouseX - ball.x) * (mouseX - ball.x) + (mouseY - ball.y) * (mouseY - ball.y));
     //console.log(dist);
-    if (mouseIsPressed) {
-        if (dist < ball.radius * 2) {
-            locked = true;
+    if (dist < ball.radius * 2) {
+        if (mouseIsPressed) {
+            ball.locked = true;
             ball.vx = 0;
             ball.vy = 0;
             ball.lx = ball.x;
@@ -88,17 +88,40 @@ function fuck(ball) {
         }
     } else {
         gravity = 0.5;
-        locked = false;
+        ball.locked = false;
+    }
+
+    for (i = 0; i < balls.length; i++) {
+        for (j = i + 1; j < balls.length; j++) {
+            first = balls[i];
+            second = balls[j];
+            const distBall = Math.sqrt((second.x - first.x) * (second.x - first.x) + (second.y - first.y) * (second.y - first.y));
+            if (distBall < ball.radius * 2) {
+                const newVelX1 = (first.vx * (first.radius - second.radius) + (2 * second.radius * second.vx) / (first.radius + second.radius));
+                const newVelY1 = (first.vy * (first.radius - second.radius) + (2 * second.radius * second.vy) / (first.radius + second.radius));
+                const newVelX2 = (second.vx * (second.radius - first.radius) + (2 * first.radius * first.vx) / (first.radius + second.radius));
+                const newVelY2 = (second.vy * (second.radius - first.radius) + (2 * first.radius * first.vy) / (first.radius + second.radius));
+                first.x = first.x;
+                first.y = first.y;
+                second.x = second.x;
+                second.y = second.y;
+                first.vx = newVelX1;
+                first.vy = newVelY1;
+                second.vx = newVelX2;
+                second.vy = newVelY2;
+            }
+        }
     }
 }
 
 function makeBall(ball) {
     ellipse(ball.x,ball.y,ball.radius*2,ball.radius*2);
+    text(ball.id,ball.x-4,ball.y+4);
 }
 
 function draw() {
     background(0);
-    balls.map(ball => makeBall(ball));
-    balls.map(ball => fuck(ball));
     balls.map(ball => move(ball));
+    balls.map(ball => fuck(ball));
+    balls.map(ball => makeBall(ball));
 }
